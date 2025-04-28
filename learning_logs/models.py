@@ -20,7 +20,7 @@ class Entry(models.Model):
     date_added = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        """Metadata for entries (plural)."""
+        """Metadata for entries."""
         verbose_name_plural = "entries"
 
     def __str__(self):
