@@ -24,7 +24,7 @@ class Entry(models.Model):
         verbose_name_plural = "entries"
 
     def __str__(self):
-        """Return a shortened version of the entry."""
+        """Return a shortened version of the entry's name."""
         if len(str(self.text)) > 50:
             return f"{self.text[:50]}..."
         else:
