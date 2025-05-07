@@ -1,3 +1,5 @@
+from tabnanny import check
+
 from django.contrib.auth import login
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
@@ -5,6 +7,11 @@ from django.http import Http404
 
 from .models import Topic, Entry
 from .forms import TopicForm, EntryForm
+
+
+def check_topic_owner(topic, request):
+    if topic.owner != request.user:
+        raise Http404
 
 
 # Create your views here.
@@ -26,8 +33,7 @@ def topic(request, topic_id):
     """Show a topic and all of its entries."""
     topic = Topic.objects.get(id=topic_id)
 
-    if topic.owner != request.user:
-        raise Http404
+    check_topic_owner(topic, request)
 
     entries = topic.entry_set.order_by("-date_added")
     context = {"topic": topic, "entries": entries}
@@ -59,6 +65,8 @@ def new_entry(request, topic_id):
     """Add a new entry to a topic."""
     topic = Topic.objects.get(id=topic_id)
 
+    check_topic_owner(topic, request)
+
     if request.method != "POST":
         # If there isn't data, create a new topic.
         form = EntryForm()
@@ -82,8 +90,7 @@ def edit_entry(request, entry_id):
     entry = Entry.objects.get(id=entry_id)
     topic = entry.topic
 
-    if topic.owner != request.user:
-        raise Http404
+    check_topic_owner(topic, request)
 
     if request.method != "POST":
         # Fill the form with the current entry by default.
